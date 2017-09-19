@@ -322,7 +322,9 @@ var BikeStatus = (function () {
                 _this.bikeState = _this.BIKESTATE_UNLOCKED;
             }
             else if ("locked" == data[0].deviceMessage.state) {
-                _this.bikeState = _this.BIKESTATE_LOCKED_NOTIFICATION;
+                if (_this.bikeState != _this.BIKESTATE_LOCKED) {
+                    _this.bikeState = _this.BIKESTATE_LOCKED_NOTIFICATION;
+                }
             }
         });
         this.bikeState = this.bikeStatusService.getDefault();
@@ -339,7 +341,7 @@ var BikeStatus = (function () {
         if (this.bikeState == this.BIKESTATE_LOCKED_NOTIFICATION) {
             this.bikeState = this.BIKESTATE_LOCKED;
         }
-        if (this.bikeState == this.BIKESTATE_UNLOCKED_NOTIFICATION) {
+        else if (this.bikeState == this.BIKESTATE_UNLOCKED_NOTIFICATION) {
             this.bikeState = this.BIKESTATE_AVAILABLE;
         }
         else if (this.bikeState == this.BIKESTATE_LOCKED) {

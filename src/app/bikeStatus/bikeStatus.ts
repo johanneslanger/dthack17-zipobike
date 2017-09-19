@@ -54,7 +54,11 @@ export class BikeStatus {
            }
            else if ("locked" == data[0].deviceMessage.state)
            {
-            this.bikeState = this.BIKESTATE_LOCKED_NOTIFICATION;
+      
+             if  (this.bikeState != this.BIKESTATE_LOCKED)
+             {
+               this.bikeState = this.BIKESTATE_LOCKED_NOTIFICATION;
+             }
            }
         });
 
@@ -74,7 +78,7 @@ export class BikeStatus {
     if (this.bikeState == this.BIKESTATE_LOCKED_NOTIFICATION){
       this.bikeState=this.BIKESTATE_LOCKED;
     }
-    if (this.bikeState == this.BIKESTATE_UNLOCKED_NOTIFICATION){
+    else if (this.bikeState == this.BIKESTATE_UNLOCKED_NOTIFICATION){
       this.bikeState=this.BIKESTATE_AVAILABLE;
     }
 
