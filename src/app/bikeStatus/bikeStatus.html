@@ -1,0 +1,18 @@
+<div class="row text-center">
+    <div class="col-12 mainText"><h2>{{bikeState.message}}</h2></div>
+</div>
+<div class="row hidden-xs">
+    <div class="col-12">
+      <a [routerLink]="['/bikeStatus']">
+        <img [src]="bikeState.image" (click)="changeState($event, item)"  class="center"/>
+      </a>
+    </div>
+</div>
+
+<div class="row visible-xs">
+    <div class="col-12">
+      <a [routerLink]="['/bikeStatus']">
+        <img [src]="bikeState.image" (click)="changeState($event, item)" class="center small-map"/>
+      </a>
+    </div>
+</div>

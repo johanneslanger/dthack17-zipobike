@@ -1,0 +1,13 @@
+img.brand {
+    vertical-align: middle;
+    display: block;
+    display: block;
+    margin: auto;
+}
+
+img.brand-small {
+    vertical-align: middle;
+    display: block;
+    margin: auto;
+    width: 50%;
+}
