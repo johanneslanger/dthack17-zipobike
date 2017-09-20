@@ -307,6 +307,7 @@ var BikeStatus = (function () {
         this.BIKESTATE_LOCKED_NOTIFICATION = { name: "BIKESTATE_LOCKED_NOTIFICATION", image: "assets/img/locked-notification.png", message: "" };
         this.BIKESTATE_LOCKED = { name: "AVAILABLE", image: "assets/img/locked.png", message: "Parking spot status at Telekom HQ!" };
         this.BIKESTATE_UNLOCKED_NOTIFICATION = { name: "BIKESTATE_UNLOCKED_NOTIFICATION", image: "assets/img/unlocked-notification.png", message: "" };
+        this.BIKESTATE_THEFT = { name: "BIKESTATE_THEFT", image: "assets/img/THIEF.png", message: "" };
         var DEVICEID = "7cdc1681-effa-4868-8472-183c90ec74b3";
         var TOKEN = "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJlS1ZZVFV5dWNQcHg0OU1WSGhHb2RfR2wyV3YtNEFibEV2SXlWQTBiWDdvIn0.eyJqdGkiOiIyNTViMGQ2OC03ZjkyLTQ5ZWQtODBiOC1iMjhjNTgxN2RmNjAiLCJleHAiOjE1MDU4NTAzNDgsIm5iZiI6MCwiaWF0IjoxNTA1ODUwMDQ4LCJpc3MiOiJodHRwczovL2lkLmRldi51YmlyY2guY29tL2F1dGgvcmVhbG1zL3ViaXJjaCIsImF1ZCI6InViaXJjaC1hZG1pbi11aS1kZW1vIiwic3ViIjoiYzExOWE4ZDgtNjNmMC00ZTYzLWExN2YtYzU0NzhkNDdjYzhmIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoidWJpcmNoLWFkbWluLXVpLWRlbW8iLCJhdXRoX3RpbWUiOjE1MDU4NTAwNDcsInNlc3Npb25fc3RhdGUiOiI5ZmEwYjgwNy0wNTY2LTRmYzgtYmU3ZC1lMjMzNzQzNGI5MDMiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHBzOi8vdWJpcmNoLmRlbW8udWJpcmNoLmNvbSJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJuYW1lIjoiSG9yYXRpdSBFdWdlbiBWbGFkIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiaHZsYWQiLCJnaXZlbl9uYW1lIjoiSG9yYXRpdSBFdWdlbiIsImZhbWlseV9uYW1lIjoiVmxhZCIsImVtYWlsIjoiaG9yYXRpdXZsYWRAeWFob28uY29tIn0.HsqVDF3VgY0w2DOl-xojcat4rwaf4c2qBB4liEuK3BLSW7o2Yr4prMnV7-OR4eR1VhqnOOise7ZmcwJWbYjgi5uN_XE3q_eveDhjweM71x5LxFH7vk8WJjYIy7keEOjOdFNQ0Gu--YtSUWxuy49mnFUKiIUnTnngMHE5DA2bgoodLf59LxCyrAeFEtseRrZNO1dfW92N7e84wS6Wi7QITnbcn8pLLBUeYAjODu2JKCxwdU1vL2xL3u6YH91yFpswI3nTkcAGfn2DHYh985oXalTq_Z-Z1QxwjzSTjS4XzrB48HJBhkN6OgJgXcbQ5fQO5seoizq2fL_kBYHXmWgvYQ";
         var HOST = "https://api.ubirch.demo.ubirch.com";
@@ -314,12 +315,24 @@ var BikeStatus = (function () {
         __WEBPACK_IMPORTED_MODULE_3_rxjs_Observable__["Observable"].interval(2000)
             .switchMap(function () { return http.get(url); }).map(function (data) { return data.json(); })
             .subscribe(function (data) {
+            console.log(data[0]);
             console.log("Found state:" + data[0].deviceMessage.state);
             if ("standby" == data[0].deviceMessage.state) {
                 _this.bikeState = _this.BIKESTATE_AVAILABLE;
             }
             else if ("unlocked" == data[0].deviceMessage.state) {
-                _this.bikeState = _this.BIKESTATE_UNLOCKED;
+                if (_this.bikeState == _this.BIKESTATE_LOCKED || _this.bikeState == _this.BIKESTATE_LOCKED_NOTIFICATION) {
+                    _this.bikeState = _this.BIKESTATE_UNLOCKED_NOTIFICATION;
+                }
+                else {
+                    _this.bikeState = _this.BIKESTATE_UNLOCKED;
+                }
+            }
+            else if ("bike" == data[0].deviceMessage.state) {
+                _this.bikeState = _this.BIKESTATE_UNLOCKED_NOTIFICATION;
+            }
+            else if ("alarm" == data[0].deviceMessage.state) {
+                _this.bikeState = _this.BIKESTATE_THEFT;
             }
             else if ("locked" == data[0].deviceMessage.state) {
                 if (_this.bikeState != _this.BIKESTATE_LOCKED) {

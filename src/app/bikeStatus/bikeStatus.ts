@@ -28,6 +28,7 @@ export class BikeStatus {
   BIKESTATE_LOCKED_NOTIFICATION: BikeState  = { name: "BIKESTATE_LOCKED_NOTIFICATION",image:  "assets/img/locked-notification.png", message: "" };
   BIKESTATE_LOCKED:  BikeState  = { name:"AVAILABLE", image: "assets/img/locked.png", message: "Parking spot status at Telekom HQ!" };
   BIKESTATE_UNLOCKED_NOTIFICATION: BikeState  = { name: "BIKESTATE_UNLOCKED_NOTIFICATION", image: "assets/img/unlocked-notification.png", message: "" };
+  BIKESTATE_THEFT: BikeState  = { name: "BIKESTATE_THEFT", image: "assets/img/THIEF.png", message: "" };
 
 
 //  bikeStateImg: string ='assets/img/unlocked.png';
@@ -44,17 +45,29 @@ export class BikeStatus {
     .switchMap(() => http.get(url)).map((data) => data.json())
         .subscribe((data) => {
 
+          console.log(data[0])
            console.log("Found state:" + data[0].deviceMessage.state)
 
            if ("standby" == data[0].deviceMessage.state){
              this.bikeState = this.BIKESTATE_AVAILABLE;
            } else if ("unlocked" == data[0].deviceMessage.state)
            {
-            this.bikeState = this.BIKESTATE_UNLOCKED;
+              if  (this.bikeState == this.BIKESTATE_LOCKED || this.bikeState == this.BIKESTATE_LOCKED_NOTIFICATION)
+              {
+                  this.bikeState = this.BIKESTATE_UNLOCKED_NOTIFICATION;
+              }else{
+                this.bikeState = this.BIKESTATE_UNLOCKED;
+              }
+           }
+           else if ("bike" == data[0].deviceMessage.state){
+             this.bikeState = this.BIKESTATE_UNLOCKED_NOTIFICATION;
+           }
+           else if ("alarm" == data[0].deviceMessage.state){
+             this.bikeState = this.BIKESTATE_THEFT;
            }
            else if ("locked" == data[0].deviceMessage.state)
            {
-      
+
              if  (this.bikeState != this.BIKESTATE_LOCKED)
              {
                this.bikeState = this.BIKESTATE_LOCKED_NOTIFICATION;
